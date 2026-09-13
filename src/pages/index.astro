@@ -48,7 +48,7 @@ const snapshot = readSnapshot(rawSnapshot);
       <h2 id="skills-title">Skills</h2>
       <div class="skills-grid">{skills.map(group => <div class="skill-group"><h3>{group.category}</h3><ul>{group.items.map(item => <li><span>{item.name}</span>{item.learning && <span class="learning">learning</span>}</li>)}</ul></div>)}</div>
     </section>
-    <section class="section split-section" aria-labelledby="currently-title">
+    <section class="section split-section currently" aria-labelledby="currently-title">
       <h2 id="currently-title">Currently</h2>
       <div class="currently-copy">{profile.currently.map(line => <p>{line}</p>)}</div>
     </section>
