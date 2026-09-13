@@ -1,5 +1,7 @@
 # Hollis Peng
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
 Personal homepage · **https://hollispeng.github.io/**
 
 Built with Astro, TypeScript, native CSS, and self-hosted Newsreader and Inter fonts. Static HTML with a small GitHub repository refresh script; no analytics or client framework.
