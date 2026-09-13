@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RepositoryList from '../components/RepositoryList.astro';
+import { profile, navigation, featuredProjects, skills } from '../data/profile';
+import rawSnapshot from '../data/github-projects.json';
+import { readSnapshot, formatDate } from '../data/github';
+const snapshot = readSnapshot(rawSnapshot);
+---
+<BaseLayout>
+  <header class="site-header wrap">
+    <a class="wordmark" href="/">{profile.name}</a>
+    <nav aria-label="Main navigation">
+      {navigation.map(item => <a class:list={{ 'secondary-nav': item.label === 'About' || item.label === 'Skills', 'external-nav': item.label === 'GitHub' }} href={item.href} target={item.href.startsWith('https:') ? '_blank' : undefined} rel={item.href.startsWith('https:') ? 'noopener noreferrer' : undefined}>{item.label}{item.label === 'GitHub' && <span aria-hidden="true"> ↗</span>}</a>)}
+    </nav>
+  </header>
+  <main id="main" class="wrap" tabindex="-1">
+    <section class="hero" aria-labelledby="name">
+      <h1 id="name">{profile.name}<span class="period" aria-hidden="true">.</span></h1>
+      <div class="hero-detail">
+        <p>{profile.statement}</p>
+        <div class="hero-links"><a class="accent-link" href="#work">View work <span aria-hidden="true">↓</span></a><a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+    <section id="work" class="work section" aria-labelledby="work-title">
+      <div class="section-heading"><h2 id="work-title">Selected Work</h2><span class="section-number" aria-hidden="true">01 — 02</span></div>
+      <div class="featured-grid">
+        {featuredProjects.map((project, index) => {
+          const metadata = snapshot.featured.find(repo => repo.name === project.repository);
+          return <article class="featured-project">
+            <span class="project-index" aria-hidden="true">0{index + 1}</span>
+            <h3><a href={`${profile.github}/${project.repository}`} target="_blank" rel="noopener noreferrer">{project.title}<span class="project-arrow" aria-hidden="true">↗</span></a></h3>
+            <p>{project.description}</p>
+            {metadata && <div class="metadata">{metadata.language && <span>{metadata.language}</span>}<span>Updated <time datetime={metadata.updatedAt}>{formatDate(metadata.updatedAt)}</time></span></div>}
+            <a class="project-link" href={`${profile.github}/${project.repository}`} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} on GitHub`}>View on GitHub <span aria-hidden="true">↗</span></a>
+          </article>;
+        })}
+      </div>
+    </section>
+    <section class="more-section" aria-labelledby="more-title">
+      <div class="more-heading"><h2 id="more-title">More on GitHub</h2><a href={profile.github} target="_blank" rel="noopener noreferrer">All repositories <span aria-hidden="true">↗</span></a></div>
+      <RepositoryList repositories={snapshot.repositories} />
+    </section>
+    <section id="about" class="section split-section" aria-labelledby="about-title">
+      <h2 id="about-title">About</h2>
+      <div><p class="about-copy">{profile.about}</p><p class="college">{profile.college}</p></div>
+    </section>
+    <section id="skills" class="section split-section" aria-labelledby="skills-title">
+      <h2 id="skills-title">Skills</h2>
+      <div class="skills-grid">{skills.map(group => <div class="skill-group"><h3>{group.category}</h3><ul>{group.items.map(item => <li><span>{item.name}</span>{item.learning && <span class="learning">learning</span>}</li>)}</ul></div>)}</div>
+    </section>
+    <section class="section split-section" aria-labelledby="currently-title">
+      <h2 id="currently-title">Currently</h2>
+      <div class="currently-copy">{profile.currently.map(line => <p>{line}</p>)}</div>
+    </section>
+    <section class="section split-section contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+      <div><p>Email or find me on GitHub.</p><div class="contact-links"><a href={`mailto:${profile.email}`}>{profile.email}<span aria-hidden="true"> ↗</span></a><a href={profile.github} target="_blank" rel="noopener noreferrer">github.com/HollisPeng<span aria-hidden="true"> ↗</span></a></div></div>
+    </section>
+  </main>
+  <footer class="wrap site-footer"><span>© {new Date().getFullYear()} {profile.name}</span><a href={profile.source} target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a></footer>
+</BaseLayout>

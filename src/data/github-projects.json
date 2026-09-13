@@ -1,0 +1,21 @@
+{
+  "repositories": [],
+  "featured": [
+    {
+      "name": "cumcm-2026-a-herbal-drying",
+      "url": "https://github.com/HollisPeng/cumcm-2026-a-herbal-drying",
+      "description": "Personal study of CUMCM 2026 Problem A: herbal drying models, paper, data, and numerical results.",
+      "language": "Python",
+      "stars": 0,
+      "updatedAt": "2026-09-12T04:44:43Z"
+    },
+    {
+      "name": "ncurses-maze-game",
+      "url": "https://github.com/HollisPeng/ncurses-maze-game",
+      "description": "A Linux terminal maze game in C11 and ncurses, developed from a CUHK ESTR1002 course project.",
+      "language": "C",
+      "stars": 0,
+      "updatedAt": "2026-09-12T04:44:15Z"
+    }
+  ]
+}

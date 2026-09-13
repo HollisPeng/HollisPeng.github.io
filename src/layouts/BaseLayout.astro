@@ -1,0 +1,29 @@
+---
+import '../styles/global.css';
+import { profile } from '../data/profile';
+const canonical = new URL('/', Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{profile.name}</title>
+    <meta name="description" content={profile.description} />
+    <meta name="theme-color" content="#F3F0E8" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={profile.name} />
+    <meta property="og:description" content={profile.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={profile.name} />
+    <meta name="twitter:description" content={profile.description} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>
