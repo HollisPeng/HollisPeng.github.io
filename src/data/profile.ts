@@ -10,7 +10,7 @@ export const profile = {
   currently: [
     'Exploring artificial intelligence and algorithms.',
     'Building and refining personal projects.',
-    'Learning Python, C++, Java, probability, and discrete mathematics.',
+    'Learning Python, C++, probability, and discrete mathematics.',
   ],
 };
 
@@ -37,7 +37,7 @@ export const featuredProjects = [
 
 type Skill = { name: string; learning?: boolean };
 export const skills: { category: string; items: Skill[] }[] = [
-  { category: 'Programming', items: [{ name: 'C' }, { name: 'Python', learning: true }, { name: 'C++', learning: true }, { name: 'Java', learning: true }] },
+  { category: 'Programming', items: [{ name: 'C' }, { name: 'Python', learning: true }, { name: 'C++', learning: true }] },
   { category: 'Mathematics', items: [{ name: 'Linear Algebra' }, { name: 'Calculus' }, { name: 'Probability', learning: true }, { name: 'Discrete Mathematics', learning: true }] },
   { category: 'Tools', items: [{ name: 'Linux' }, { name: 'Git' }, { name: 'GitHub' }] },
   { category: 'Interests', items: [{ name: 'Artificial Intelligence' }, { name: 'Algorithms' }] },
