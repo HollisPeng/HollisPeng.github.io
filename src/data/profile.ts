@@ -37,7 +37,7 @@ export const featuredProjects = [
 
 type Skill = { name: string; learning?: boolean };
 export const skills: { category: string; items: Skill[] }[] = [
-  { category: 'Programming', items: [{ name: 'C' }, { name: 'Python', learning: true }, { name: 'C++', learning: true }, { name: 'Java', learning: true }] },
+  { category: 'Programming', items: [{ name: 'C' }, { name: 'Python', learning: true }, { name: 'Java', learning: true }] },
   { category: 'Tools', items: [{ name: 'Linux' }, { name: 'Git' }, { name: 'GitHub' }] },
   { category: 'Mathematics', items: [{ name: 'Calculus' }, { name: 'Linear Algebra' }, { name: 'Discrete Mathematics', learning: true }, { name: 'Probability', learning: true }] },
   { category: 'Interests', items: [{ name: 'Artificial Intelligence' }, { name: 'Algorithms' }] },
