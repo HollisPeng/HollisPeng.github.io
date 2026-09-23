@@ -10,7 +10,7 @@ export const profile = {
   currently: [
     'Exploring artificial intelligence and algorithms.',
     'Building and refining personal projects.',
-    'Learning Python, C++, Java, discrete mathematics, and probability.',
+    'Learning Python, Java, discrete mathematics, and probability.',
   ],
 };
 
