@@ -12,7 +12,9 @@ export type Snapshot = { repositories: Repository[] | null; featured: Repository
 
 export const apiUrl = 'https://api.github.com/users/HollisPeng/repos?type=owner&sort=updated&direction=desc&per_page=100';
 export const apiHeaders = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2026-03-10' };
-const excluded = new Set(['hollispeng.github.io', ...featuredProjects.map(project => project.repository.toLowerCase())]);
+// Featured projects with a `repository` and no `owner` are this account's own repositories.
+export const ownFeatured = featuredProjects.flatMap(project => project.repository && !project.owner ? [project.repository] : []);
+const excluded = new Set(['hollispeng.github.io', ...ownFeatured.map(name => name.toLowerCase())]);
 const optionalText = (value: unknown): value is string | null => value === null || typeof value === 'string';
 
 export function isRepository(value: unknown): value is Repository {

@@ -4,12 +4,9 @@ import type { Repository } from '../data/github';
 function render(repositories: Repository[]) {
   const container = document.getElementById('repositories');
   if (!container) return;
+  // With nothing beyond the featured work, the heading row alone links to GitHub.
   if (repositories.length === 0) {
-    if (container.querySelector('.empty-state')?.textContent === 'No additional public projects to show.') return;
-    const empty = document.createElement('p');
-    empty.className = 'empty-state';
-    empty.textContent = 'No additional public projects to show.';
-    container.replaceChildren(empty);
+    container.replaceChildren();
     return;
   }
   const list = document.createElement('ul');

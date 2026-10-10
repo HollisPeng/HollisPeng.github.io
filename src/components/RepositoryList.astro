@@ -7,7 +7,7 @@ const { repositories } = Astro.props;
 ---
 <div id="repositories" aria-live="polite" aria-atomic="true">
   {repositories === null ? <p class="empty-state">Projects are temporarily unavailable. <a href={profile.github} target="_blank" rel="noopener noreferrer">View them on GitHub.</a></p>
-    : repositories.length === 0 ? <p class="empty-state">No additional public projects to show.</p>
+    : repositories.length === 0 ? null
     : <ul class="repository-list">{repositories.map(repository => <li>
       <div class="repository-copy">
         <h3><a href={repository.url} target="_blank" rel="noopener noreferrer">{repository.name}<span aria-hidden="true"> ↗</span></a></h3>

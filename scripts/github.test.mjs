@@ -8,6 +8,9 @@ test('excludes non-public, forked, archived, disabled, featured and homepage rep
   const data = [repo('visible'), repo('fork', { fork: true }), repo('archive', { archived: true }), repo('disabled', { disabled: true }), repo('private', { private: true }), repo('cumcm-2026-a-herbal-drying'), repo('ncurses-maze-game'), repo('HollisPeng.github.io')];
   assert.deepEqual(additionalRepositories(normalizeRepositories(data)).map(r => r.name), ['visible']);
 });
+test('keeps an own repository that shares its name with a featured contribution to someone else', () => {
+  assert.deepEqual(additionalRepositories(normalizeRepositories([repo('euclid_maths')])).map(r => r.name), ['euclid_maths']);
+});
 test('sorts by latest update and limits to six while allowing missing description and language', () => {
   const result = additionalRepositories(normalizeRepositories(Array.from({ length: 9 }, (_, i) => repo(`project-${i}`, { updated_at: `2026-09-0${i + 1}T00:00:00Z` }))));
   assert.equal(result.length, 6);

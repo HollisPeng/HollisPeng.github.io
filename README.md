@@ -19,13 +19,13 @@ npm run build
 npm run preview
 ```
 
-Edit `src/data/profile.ts` for personal details, navigation, featured projects, and ordered skills. Edit `src/styles/global.css` for the visual design.
+Edit `src/data/profile.ts` for personal details, navigation, featured projects, and ordered skills. Featured projects are listed in display order; set `owner` for a repository that belongs to someone else, and omit `repository` to describe non-public work without a link. Edit `src/styles/global.css` for the visual design. The hero illustration in `src/components/EnergyLandscape.astro` is a static, generated SVG.
 
 ## Project synchronization
 
-`npm run build` retrieves public owner repositories and updates `src/data/github-projects.json`. Forks, archived and disabled repositories, this homepage, and featured projects are excluded from the additional list. At most six projects appear, newest first. The two featured projects use verified repository metadata.
+`npm run build` retrieves public owner repositories and updates `src/data/github-projects.json`. Forks, archived and disabled repositories, this homepage, and featured projects are excluded from the additional list. At most six projects appear, newest first. Featured projects owned by this account use verified repository metadata; contributions to other repositories use the labels in `profile.ts`.
 
-The page includes this snapshot in its initial HTML and attempts one unauthenticated refresh when the repository section approaches the viewport. Failed, invalid, rate-limited, or timed-out requests retain the bundled snapshot. Missing snapshots display a short fallback link. No browser token is required or included.
+The page includes this snapshot in its initial HTML and attempts one unauthenticated refresh when the repository section approaches the viewport. Failed, invalid, rate-limited, or timed-out requests retain the bundled snapshot. Missing snapshots display a short fallback link, and an empty list leaves only the heading row linking to GitHub. No browser token is required or included.
 
 ## Deployment
 

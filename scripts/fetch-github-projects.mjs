@@ -1,6 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { apiUrl, apiHeaders, normalizeRepositories, additionalRepositories, readSnapshot } from '../src/data/github.ts';
-import { featuredProjects } from '../src/data/profile.ts';
+import { apiUrl, apiHeaders, normalizeRepositories, additionalRepositories, readSnapshot, ownFeatured } from '../src/data/github.ts';
 
 const destination = new URL('../src/data/github-projects.json', import.meta.url);
 try {
@@ -11,7 +10,7 @@ try {
   const all = normalizeRepositories(await response.json());
   const snapshot = {
     repositories: additionalRepositories(all),
-    featured: all.filter(r => featuredProjects.some(p => p.repository === r.name)),
+    featured: all.filter(r => ownFeatured.includes(r.name)),
   };
   await writeFile(destination, JSON.stringify(snapshot, null, 2) + '\n');
   console.log(`GitHub snapshot: ${snapshot.featured.length} featured, ${snapshot.repositories.length} additional.`);
