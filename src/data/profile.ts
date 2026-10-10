@@ -9,8 +9,7 @@ export const profile = {
   about: 'I study Computer Science at The Chinese University of Hong Kong. My interest is in generative AI, and I am currently studying energy-based models and variational methods. This site collects my projects and records some of the things I am working on.',
   college: 'United College, The Chinese University of Hong Kong',
   currently: [
-    'Studying energy-based models and variational methods.',
-    'Exploring generative AI.',
+    'Studying generative AI through energy-based models and variational methods.',
     'Building and refining personal projects.',
     'Learning Python, Java, probability, and discrete mathematics.',
   ],
@@ -72,5 +71,5 @@ export const skills: { category: string; items: Skill[] }[] = [
   { category: 'Mathematics', items: [{ name: 'Calculus' }, { name: 'Linear Algebra' }, { name: 'Probability', learning: true }, { name: 'Discrete Mathematics', learning: true }] },
   { category: 'Programming', items: [{ name: 'C' }, { name: 'Python', learning: true }, { name: 'Java', learning: true }] },
   { category: 'Tools', items: [{ name: 'Linux' }, { name: 'Git' }, { name: 'GitHub' }] },
-  { category: 'Interests', items: [{ name: 'Generative AI' }, { name: 'Energy-Based Models', learning: true }, { name: 'Variational Methods', learning: true }] },
+  { category: 'Generative AI', items: [{ name: 'Energy-Based Models', learning: true }, { name: 'Variational Methods', learning: true }] },
 ];
