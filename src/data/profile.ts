@@ -16,9 +16,10 @@ export const profile = {
 };
 
 export const navigation = [
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
+  { label: 'Work', href: '/#work' },
+  { label: 'Models', href: '/models' },
+  { label: 'About', href: '/#about' },
+  { label: 'Skills', href: '/#skills' },
   { label: 'GitHub', href: profile.github },
   { label: 'Email', href: `mailto:${profile.email}` },
 ];

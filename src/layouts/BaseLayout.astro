@@ -1,29 +1,44 @@
 ---
 import '../styles/global.css';
-import { profile } from '../data/profile';
-const canonical = new URL('/', Astro.site);
+import { profile, navigation } from '../data/profile';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+}
+
+const { title, description, canonicalPath } = Astro.props;
+const canonical = new URL(canonicalPath, Astro.site);
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{profile.name}</title>
-    <meta name="description" content={profile.description} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
     <meta name="theme-color" content="#FAF9F5" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={profile.name} />
-    <meta property="og:description" content={profile.description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={profile.name} />
-    <meta name="twitter:description" content={profile.description} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="wordmark" href="/">{profile.name}</a>
+      <nav aria-label="Main navigation">
+        {navigation.map(item => <a class:list={{ 'secondary-nav': item.label === 'About' || item.label === 'Skills', 'external-nav': item.label === 'GitHub', 'nav-button': item.label === 'Email' }} href={item.href} target={item.href.startsWith('https:') ? '_blank' : undefined} rel={item.href.startsWith('https:') ? 'noopener noreferrer' : undefined}>{item.label}{item.label === 'GitHub' && <span aria-hidden="true"> ↗</span>}</a>)}
+      </nav>
+    </header>
     <slot />
+    <footer class="wrap site-footer"><span>© {new Date().getFullYear()} {profile.name}</span><a href={profile.source} target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a></footer>
   </body>
 </html>

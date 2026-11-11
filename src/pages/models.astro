@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FrontierFigure from '../components/FrontierFigure.astro';
+import { frontier } from '../data/frontier';
+---
+<BaseLayout title="Models, Hollis Peng" description="GPQA Diamond accuracy for six labs. Each line keeps that lab's best score so far." canonicalPath="/models">
+  <main id="main" class="wrap models" tabindex="-1">
+    <section aria-labelledby="models-title">
+      <div class="section-heading"><h1 id="models-title">Models</h1></div>
+      <p class="models-lede">Each line is one lab's best GPQA Diamond score so far. A later model is drawn only when it sets a new best. The table covers June 2023 through September 2025.</p>
+      <p class="models-source">{frontier.scale.meaning} <a href="https://epoch.ai/data/charts/ai-capabilities-over-past-year/benchmark_scores.csv" target="_blank" rel="noopener noreferrer">Epoch AI table</a></p>
+      <FrontierFigure frontier={frontier} />
+    </section>
+  </main>
+</BaseLayout>
