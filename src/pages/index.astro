@@ -2,19 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RepositoryList from '../components/RepositoryList.astro';
 import EnergyLandscape from '../components/EnergyLandscape.astro';
-import { profile, navigation, featuredProjects, skills } from '../data/profile';
+import { profile, featuredProjects, skills } from '../data/profile';
 import rawSnapshot from '../data/github-projects.json';
 import { readSnapshot, formatDate } from '../data/github';
 const snapshot = readSnapshot(rawSnapshot);
 const [currentFocus, ...currentNotes] = profile.currently;
 ---
-<BaseLayout>
-  <header class="site-header wrap">
-    <a class="wordmark" href="/">{profile.name}</a>
-    <nav aria-label="Main navigation">
-      {navigation.map(item => <a class:list={{ 'secondary-nav': item.label === 'About' || item.label === 'Skills', 'external-nav': item.label === 'GitHub', 'nav-button': item.label === 'Email' }} href={item.href} target={item.href.startsWith('https:') ? '_blank' : undefined} rel={item.href.startsWith('https:') ? 'noopener noreferrer' : undefined}>{item.label}{item.label === 'GitHub' && <span aria-hidden="true"> ↗</span>}</a>)}
-    </nav>
-  </header>
+<BaseLayout title={profile.name} description={profile.description} canonicalPath="/">
   <main id="main" class="wrap" tabindex="-1">
     <section class="hero" aria-labelledby="name">
       <div class="hero-copy">
@@ -74,5 +68,4 @@ const [currentFocus, ...currentNotes] = profile.currently;
       <div><p>Email or find me on GitHub.</p><div class="contact-links"><a href={`mailto:${profile.email}`}>{profile.email}<span aria-hidden="true"> ↗</span></a><a href={profile.github} target="_blank" rel="noopener noreferrer">github.com/HollisPeng<span aria-hidden="true"> ↗</span></a></div></div>
     </section>
   </main>
-  <footer class="wrap site-footer"><span>© {new Date().getFullYear()} {profile.name}</span><a href={profile.source} target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a></footer>
 </BaseLayout>
