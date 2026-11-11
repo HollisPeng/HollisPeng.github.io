@@ -1,5 +1,11 @@
-import { apiUrl, apiHeaders, normalizeRepositories, additionalRepositories, formatDate } from '../data/github';
-import type { Repository } from '../data/github';
+import {
+  apiUrl,
+  apiHeaders,
+  normalizeRepositories,
+  additionalRepositories,
+  formatDate,
+} from '../lib/github';
+import type { Repository } from '../lib/github';
 
 function render(repositories: Repository[]) {
   const container = document.getElementById('repositories');
@@ -13,41 +19,56 @@ function render(repositories: Repository[]) {
   list.className = 'repository-list';
   for (const repository of repositories) {
     const item = document.createElement('li');
+    item.className = 'repository-card';
+
     const copy = document.createElement('div');
     copy.className = 'repository-copy';
+
     const title = document.createElement('h3');
     const link = document.createElement('a');
     link.href = repository.url;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     link.textContent = repository.name;
+
     const arrow = document.createElement('span');
     arrow.setAttribute('aria-hidden', 'true');
+    arrow.className = 'link-arrow';
     arrow.textContent = ' ↗';
     link.append(arrow);
     title.append(link);
     copy.append(title);
+
     if (repository.description) {
       const description = document.createElement('p');
       description.textContent = repository.description;
       copy.append(description);
     }
+
     const metadata = document.createElement('div');
     metadata.className = 'metadata';
-    const labels = [repository.language, `${repository.stars} ${repository.stars === 1 ? 'star' : 'stars'}`];
-    for (const label of labels) {
-      if (!label) continue;
-      const span = document.createElement('span');
-      span.textContent = label;
-      metadata.append(span);
+
+    if (repository.language) {
+      const lang = document.createElement('span');
+      lang.className = 'chip chip-neutral';
+      lang.textContent = repository.language;
+      metadata.append(lang);
     }
+
+    const stars = document.createElement('span');
+    stars.className = 'chip chip-neutral';
+    stars.textContent = `★ ${repository.stars} ${repository.stars === 1 ? 'star' : 'stars'}`;
+    metadata.append(stars);
+
     const updated = document.createElement('span');
+    updated.className = 'meta-time';
     updated.textContent = 'Updated ';
     const time = document.createElement('time');
     time.dateTime = repository.updatedAt;
     time.textContent = formatDate(repository.updatedAt);
     updated.append(time);
     metadata.append(updated);
+
     item.append(copy, metadata);
     list.append(item);
   }
@@ -56,20 +77,30 @@ function render(repositories: Repository[]) {
 
 async function refresh() {
   try {
-    const response = await fetch(apiUrl, { headers: apiHeaders, signal: AbortSignal.timeout(5000) });
+    const response = await fetch(apiUrl, {
+      headers: apiHeaders,
+      signal: AbortSignal.timeout(5000),
+    });
     if (!response.ok) return;
     render(additionalRepositories(normalizeRepositories(await response.json())));
-  } catch { /* The static snapshot stays visible on timeout, invalid data, or network failure. */ }
+  } catch {
+    /* The static snapshot stays visible on timeout, invalid data, or network failure. */
+  }
 }
 
 // Refresh after initial layout, when this section is near the viewport.
 const container = document.getElementById('repositories');
 if (container && 'IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(entries => {
-    if (entries.some(entry => entry.isIntersecting)) {
-      observer.disconnect();
-      void refresh();
-    }
-  }, { rootMargin: '400px' });
+  const observer = new IntersectionObserver(
+    entries => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        observer.disconnect();
+        void refresh();
+      }
+    },
+    { rootMargin: '400px' },
+  );
   observer.observe(container);
-} else { void refresh(); }
+} else {
+  void refresh();
+}

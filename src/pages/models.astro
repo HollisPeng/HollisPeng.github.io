@@ -1,14 +1,55 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FrontierFigure from '../components/FrontierFigure.astro';
-import { frontier } from '../data/frontier';
+import FrontierFigure from '../components/models/FrontierFigure.astro';
+import { frontier } from '../data/frontier-models';
 ---
-<BaseLayout title="Models, Hollis Peng" description="GPQA Diamond accuracy for six labs. Each line keeps that lab's best score so far." canonicalPath="/models">
+<BaseLayout
+  title="AI Models Frontier · Hollis Peng"
+  description="Capability progression of 79 frontier and open-weight large language models across 8 AI laboratories on GPQA Diamond (2023–2025)."
+  canonicalPath="/models"
+>
   <main id="main" class="wrap models" tabindex="-1">
     <section aria-labelledby="models-title">
-      <div class="section-heading"><h1 id="models-title">Models</h1></div>
-      <p class="models-lede">Each line is one lab's best GPQA Diamond score so far. A later model is drawn only when it sets a new best. The table covers June 2023 through September 2025.</p>
-      <p class="models-source">{frontier.scale.meaning} <a href="https://epoch.ai/data/charts/ai-capabilities-over-past-year/benchmark_scores.csv" target="_blank" rel="noopener noreferrer">Epoch AI table</a></p>
+      <div class="models-hero">
+        <div class="models-hero-copy">
+          <span class="section-eyebrow">Benchmark Capability Tracker</span>
+          <h1 id="models-title">AI Language Model Frontier</h1>
+          <p class="models-lede">
+            Tracking scientific reasoning accuracy on <strong>GPQA Diamond</strong> across {frontier.summary.labCount} major AI research laboratories and {frontier.summary.totalModels} evaluated models from March 2023 through late 2025. Each laboratory’s trajectory angles forward across record-setting releases alongside efficient and open-weight models.
+          </p>
+          <p class="models-source">
+            {frontier.scale.meaning} Primary benchmark scores compiled from{' '}
+            <a
+              href="https://epoch.ai/data/charts/ai-capabilities-over-past-year/benchmark_scores.csv"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Epoch AI <span aria-hidden="true">↗</span>
+            </a>{' '}
+            and official laboratory technical reports.
+          </p>
+        </div>
+
+        <div class="models-kpi-grid" aria-label="Benchmark summary metrics">
+          <div class="kpi-card kpi-blue">
+            <span class="kpi-value">{frontier.summary.labCount}</span>
+            <span class="kpi-label">AI Laboratories</span>
+          </div>
+          <div class="kpi-card kpi-green">
+            <span class="kpi-value">{frontier.summary.totalModels}</span>
+            <span class="kpi-label">Models Evaluated</span>
+          </div>
+          <div class="kpi-card kpi-yellow">
+            <span class="kpi-value">{frontier.summary.topScore.toFixed(1)}%</span>
+            <span class="kpi-label">Peak Accuracy ({frontier.summary.topModel})</span>
+          </div>
+          <div class="kpi-card kpi-red">
+            <span class="kpi-value">69.7%</span>
+            <span class="kpi-label">Human PhD Expert Baseline</span>
+          </div>
+        </div>
+      </div>
+
       <FrontierFigure frontier={frontier} />
     </section>
   </main>

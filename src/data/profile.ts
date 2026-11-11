@@ -2,11 +2,13 @@ export const profile = {
   name: 'Hollis Peng',
   statement: 'Computer Science student at CUHK, interested in generative AI.',
   status: 'Studying energy-based models and variational methods',
-  description: 'Personal website of Hollis Peng, a Computer Science student at CUHK interested in generative AI and currently studying energy-based models and variational methods.',
+  description:
+    'Personal website of Hollis Peng, a Computer Science student at CUHK interested in generative AI and currently studying energy-based models and variational methods.',
   email: 'hmhollispeng@gmail.com',
   github: 'https://github.com/HollisPeng',
   source: 'https://github.com/HollisPeng/HollisPeng.github.io',
-  about: 'I study Computer Science at The Chinese University of Hong Kong. My interest is in generative AI, and I am currently studying energy-based models and variational methods. This site collects my projects and records some of the things I am working on.',
+  about:
+    'I study Computer Science at The Chinese University of Hong Kong. My interest is in generative AI, and I am currently studying energy-based models and variational methods. This site collects my projects and records some of the things I am working on.',
   college: 'United College, The Chinese University of Hong Kong',
   currently: [
     'Studying generative AI through energy-based models and variational methods.',
@@ -35,24 +37,28 @@ export type FeaturedProject = {
   owner?: string;
   pullRequest?: number;
 };
+
 export const featuredProjects: FeaturedProject[] = [
   {
     title: 'Agent Nexus',
     role: 'Core contributor',
-    description: 'A collaboration platform for AI agents, built with a small team. I contribute across the backend, the web and desktop clients, and the project’s build and CI tooling.',
+    description:
+      'A collaboration platform for AI agents, built with a small team. I contribute across the backend, the web and desktop clients, and the project’s build and CI tooling.',
     tags: ['Team project', 'Private repository'],
   },
   {
     repository: 'cumcm-2026-a-herbal-drying',
     title: 'Herbal Drying — CUMCM 2026 A',
     role: 'Author',
-    description: 'A personal study of CUMCM 2026 Problem A: heat and moisture transport in drying medicinal herbs, modeled with axisymmetric finite volumes and an implicit BDF solver. Includes the paper, code, data, and numerical results.',
+    description:
+      'A personal study of CUMCM 2026 Problem A: heat and moisture transport in drying medicinal herbs, modeled with axisymmetric finite volumes and an implicit BDF solver. Includes the paper, code, data, and numerical results.',
   },
   {
     repository: 'ncurses-maze-game',
     title: 'ncurses Maze Game',
     role: 'Author',
-    description: 'A terminal maze game in C11 and ncurses with teleporters, timed spikes, powerups, and a moving exit. Developed from my ESTR1002 final project, with game rules kept separate from the interface and covered by tests and sanitizer builds.',
+    description:
+      'A terminal maze game in C11 and ncurses with teleporters, timed spikes, powerups, and a moving exit. Developed from my ESTR1002 final project, with game rules kept separate from the interface and covered by tests and sanitizer builds.',
   },
   {
     repository: 'euclid_maths',
@@ -60,17 +66,52 @@ export const featuredProjects: FeaturedProject[] = [
     pullRequest: 2,
     title: 'Euclid’s Gate',
     role: 'Contributor',
-    description: 'The content repository and AI writing workflow behind a mathematics education publication. I reorganized the repository by content type, repaired article indexes and image references, and added licensing and project configuration.',
+    description:
+      'The content repository and AI writing workflow behind a mathematics education publication. I reorganized the repository by content type, repaired article indexes and image references, and added licensing and project configuration.',
     tags: ['Python', 'Open-source contribution'],
   },
 ];
 
 // Ordered by relevance to research on energy-based models and variational methods,
 // with skills still being learned placed after established ones.
-type Skill = { name: string; learning?: boolean };
-export const skills: { category: string; items: Skill[] }[] = [
-  { category: 'Mathematics', items: [{ name: 'Calculus' }, { name: 'Linear Algebra' }, { name: 'Probability', learning: true }, { name: 'Discrete Mathematics', learning: true }] },
-  { category: 'Programming', items: [{ name: 'C' }, { name: 'Python', learning: true }, { name: 'Java', learning: true }] },
-  { category: 'Tools', items: [{ name: 'Linux' }, { name: 'Git' }, { name: 'GitHub' }] },
-  { category: 'Generative AI', items: [{ name: 'Energy-Based Models', learning: true }, { name: 'Variational Methods', learning: true }] },
+export type Skill = { name: string; learning?: boolean };
+export type SkillAccent = 'blue' | 'green' | 'yellow' | 'red';
+
+export const skills: {
+  category: string;
+  accent: SkillAccent;
+  items: Skill[];
+}[] = [
+  {
+    category: 'Mathematics',
+    accent: 'blue',
+    items: [
+      { name: 'Calculus' },
+      { name: 'Linear Algebra' },
+      { name: 'Probability', learning: true },
+      { name: 'Discrete Mathematics', learning: true },
+    ],
+  },
+  {
+    category: 'Programming',
+    accent: 'green',
+    items: [
+      { name: 'C' },
+      { name: 'Python', learning: true },
+      { name: 'Java', learning: true },
+    ],
+  },
+  {
+    category: 'Tools',
+    accent: 'yellow',
+    items: [{ name: 'Linux' }, { name: 'Git' }, { name: 'GitHub' }],
+  },
+  {
+    category: 'Generative AI',
+    accent: 'red',
+    items: [
+      { name: 'Energy-Based Models', learning: true },
+      { name: 'Variational Methods', learning: true },
+    ],
+  },
 ];

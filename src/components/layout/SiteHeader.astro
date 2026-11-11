@@ -1,0 +1,51 @@
+---
+import { profile, navigation } from '../../data/profile';
+
+interface Props {
+  canonicalPath: string;
+}
+
+const { canonicalPath } = Astro.props;
+const isModels = canonicalPath.startsWith('/models');
+---
+<header class="site-header-bar">
+  <div class="site-header wrap">
+    <a class="wordmark" href="/" aria-label={`${profile.name} home`}>
+      <span class="google-dots" aria-hidden="true">
+        <span class="g-dot g-blue"></span>
+        <span class="g-dot g-red"></span>
+        <span class="g-dot g-yellow"></span>
+        <span class="g-dot g-green"></span>
+      </span>
+      <span class="wordmark-text">{profile.name}</span>
+    </a>
+    <nav aria-label="Main navigation">
+      {navigation.map(item => {
+        const isExternal = item.href.startsWith('https:');
+        const isButton = item.label === 'Email';
+        const isSecondary = item.label === 'About' || item.label === 'Skills';
+        const isActive =
+          (item.href === '/models' && isModels) ||
+          (item.href === '/#work' && !isModels);
+        return (
+          <a
+            class:list={{
+              'nav-pill': !isButton,
+              'nav-pill-active': isActive && item.href === '/models',
+              'secondary-nav': isSecondary,
+              'external-nav': isExternal,
+              'nav-button': isButton,
+            }}
+            href={item.href}
+            aria-current={item.href === '/models' && isModels ? 'page' : undefined}
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
+          >
+            {item.label}
+            {isExternal && <span class="link-arrow" aria-hidden="true">↗</span>}
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+</header>

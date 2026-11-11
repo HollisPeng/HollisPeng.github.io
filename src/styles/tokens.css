@@ -1,0 +1,67 @@
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2');
+}
+
+:root {
+  color-scheme: light;
+
+  /* Google Material 3 Surface System */
+  --surface: #ffffff;
+  --surface-dim: #f8fafd;
+  --surface-container-low: #f0f4f9;
+  --surface-container: #e9eef6;
+  --surface-container-high: #dde3ea;
+
+  /* Google Tonal Containers */
+  --tonal-blue: #e8f0fe;
+  --tonal-blue-strong: #d3e3fd;
+  --tonal-green: #e6f4ea;
+  --tonal-yellow: #fef7e0;
+  --tonal-red: #fce8e6;
+
+  /* Google Ink & Typography Colors */
+  --ink: #1f1f1f;
+  --ink-secondary: #444746;
+  --ink-muted: #5f6368;
+  --ink-subtle: #747775;
+
+  /* Iconic Google 4-Color Brand Palette */
+  --google-blue: #1a73e8;
+  --google-blue-dark: #0b57d0;
+  --google-blue-bright: #4285f4;
+  --google-red: #ea4335;
+  --google-red-dark: #c5221f;
+  --google-yellow: #fbbc04;
+  --google-yellow-dark: #b06000;
+  --google-green: #34a853;
+  --google-green-dark: #137333;
+
+  /* Hairlines & Outlines */
+  --rule: #dadce0;
+  --rule-subtle: #e2e8f0;
+
+  /* Typography Stacks (Clean Geometric/Humanist Sans + Technical Mono) */
+  --sans: 'Inter Variable', 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'Roboto Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  /* Material 3 Radii & Elevations */
+  --radius-xs: 8px;
+  --radius-small: 12px;
+  --radius: 20px;
+  --radius-large: 28px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(60, 64, 67, 0.08), 0 1px 3px 1px rgba(60, 64, 67, 0.04);
+  --shadow-md: 0 1px 3px rgba(60, 64, 67, 0.12), 0 4px 12px 2px rgba(60, 64, 67, 0.06);
+  --shadow-lg: 0 4px 16px rgba(26, 115, 232, 0.12), 0 1px 3px rgba(60, 64, 67, 0.08);
+
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--surface-dim);
+  font-synthesis: none;
+  scroll-behavior: smooth;
+}

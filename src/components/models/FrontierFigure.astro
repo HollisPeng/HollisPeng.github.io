@@ -1,0 +1,582 @@
+---
+import type { Frontier, FrontierPoint } from '../../lib/frontier';
+import { linePath, areaPath } from '../../lib/frontier';
+
+interface Props {
+  frontier: Frontier;
+}
+
+const { frontier } = Astro.props;
+
+const plot = { left: 56, top: 34, width: 756, height: 368 };
+const svgWidth = plot.left + plot.width + 168;
+const svgHeight = plot.top + plot.height + 44;
+const viewBox = `0 0 ${svgWidth} ${svgHeight}`;
+
+const place = (value: number) => Math.round(value * 100) / 100;
+const xOf = (x: number) => place(plot.left + x * plot.width);
+const yOf = (y: number) => place(plot.top + (1 - y) * plot.height);
+
+const scoreLevels = [20, 40, 60, 80, 100];
+const scoreSpan = frontier.scale.maxScore - frontier.scale.minScore;
+const levelY = (score: number) =>
+  yOf((score - frontier.scale.minScore) / scoreSpan);
+
+// Compute de-overlapped Y positions for right-hand direct lab labels
+const rawEndLabels = frontier.lines
+  .map(line => {
+    const last = line.points[line.points.length - 1];
+    return {
+      id: line.id,
+      name: line.name,
+      color: line.color,
+      peakScore: line.peakScore,
+      lastX: xOf(last.x),
+      lastY: yOf(last.y),
+      labelY: yOf(last.y),
+    };
+  })
+  .sort((a, b) => a.lastY - b.lastY);
+
+const minGap = 19;
+for (let i = 1; i < rawEndLabels.length; i += 1) {
+  if (rawEndLabels[i].labelY - rawEndLabels[i - 1].labelY < minGap) {
+    rawEndLabels[i].labelY = rawEndLabels[i - 1].labelY + minGap;
+  }
+}
+
+// Highlighted callout model names to annotate directly on the canvas
+const annotatedModels = new Set([
+  'GPT-3.5 Turbo',
+  'PaLM 2',
+  'GPT-4',
+  'Gemini 1.5 Pro (002)',
+  'o1-preview',
+  'DeepSeek-R1',
+  'Gemini 2.5 Pro (Exp)',
+  'GPT-5',
+]);
+
+function annotationOffset(point: FrontierPoint): { dx: number; dy: number; anchor: 'start' | 'middle' | 'end' } {
+  if (point.name === 'GPT-5') return { dx: -8, dy: -10, anchor: 'end' };
+  if (point.name === 'Gemini 2.5 Pro (Exp)') return { dx: -6, dy: -10, anchor: 'end' };
+  if (point.name === 'o1-preview') return { dx: -6, dy: -10, anchor: 'end' };
+  if (point.name === 'DeepSeek-R1') return { dx: 8, dy: 14, anchor: 'start' };
+  if (point.name === 'GPT-3.5 Turbo') return { dx: 8, dy: -8, anchor: 'start' };
+  if (point.name === 'PaLM 2') return { dx: 8, dy: 13, anchor: 'start' };
+  return { dx: 0, dy: -10, anchor: 'middle' };
+}
+---
+<div class="frontier-workspace" id="frontier-workspace">
+  <!-- Interactive Toolbar: Lab Filter Chips & View Mode Toggle -->
+  <div class="frontier-toolbar" role="region" aria-label="Chart controls">
+    <div class="frontier-filter-group" role="group" aria-label="Filter by AI laboratory">
+      <button
+        type="button"
+        class="lab-chip is-active"
+        data-lab-filter="all"
+        aria-pressed="true"
+      >
+        <span class="google-dots google-dots-xs" aria-hidden="true">
+          <span class="g-dot g-blue"></span>
+          <span class="g-dot g-red"></span>
+          <span class="g-dot g-yellow"></span>
+          <span class="g-dot g-green"></span>
+        </span>
+        <span>All Labs</span>
+        <span class="lab-chip-count">{frontier.summary.labCount}</span>
+      </button>
+      {frontier.lines.map(line => (
+        <button
+          type="button"
+          class="lab-chip"
+          data-lab-filter={line.id}
+          style={`--lab-color: ${line.color}; --lab-tint: ${line.tint};`}
+          aria-pressed="false"
+        >
+          <span class="lab-swatch-dot" aria-hidden="true"></span>
+          <span>{line.name}</span>
+          <span class="lab-chip-count">{line.allPoints.length}</span>
+        </button>
+      ))}
+    </div>
+
+    <div class="frontier-mode-toggle" role="group" aria-label="Model point visibility">
+      <button
+        type="button"
+        class="mode-btn is-active"
+        data-point-mode="all"
+        aria-pressed="true"
+      >
+        All Models ({frontier.summary.totalModels})
+      </button>
+      <button
+        type="button"
+        class="mode-btn"
+        data-point-mode="frontier"
+        aria-pressed="false"
+      >
+        Frontier Only ({frontier.summary.frontierModels})
+      </button>
+    </div>
+  </div>
+
+  <!-- Main SVG Chart Card -->
+  <figure class="frontier-card">
+    <div class="frontier-card-header">
+      <div>
+        <h2 class="frontier-card-title">GPQA Diamond Capability Trajectories (2023–2025)</h2>
+        <p class="frontier-card-subtitle">
+          Solid lines connect each laboratory’s progressive record-setting models; hollow markers denote efficient or intermediate releases. Hover or focus any node for details.
+        </p>
+      </div>
+      <div class="frontier-key" aria-hidden="true">
+        <span class="key-item">
+          <span class="key-node key-node-frontier"></span>
+          Frontier Record
+        </span>
+        <span class="key-item">
+          <span class="key-node key-node-scatter"></span>
+          Efficient / Other Model
+        </span>
+        <span class="key-item">
+          <span class="key-line-dashed"></span>
+          PhD Baseline
+        </span>
+      </div>
+    </div>
+
+    <div class="frontier-stage" id="frontier-stage">
+      <svg
+        class="frontier-plot"
+        viewBox={viewBox}
+        role="img"
+        aria-label="Line chart of GPQA Diamond accuracy across eight AI laboratories from March 2023 to September 2025"
+      >
+        <defs>
+          {frontier.lines.map(line => (
+            <linearGradient id={`grad-${line.id}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color={line.color} stop-opacity="0.18" />
+              <stop offset="100%" stop-color={line.color} stop-opacity="0.0" />
+            </linearGradient>
+          ))}
+        </defs>
+
+        <!-- Horizontal Score Gridlines & Y-Axis Labels -->
+        {scoreLevels.map(score => {
+          const y = levelY(score);
+          return (
+            <g>
+              <line
+                class="frontier-grid"
+                x1={plot.left}
+                x2={plot.left + plot.width}
+                y1={y}
+                y2={y}
+              />
+              <text class="frontier-tick-y" x={plot.left - 10} y={y}>
+                {score}%
+              </text>
+            </g>
+          );
+        })}
+
+        <!-- Vertical Timeline Ticks & X-Axis Labels -->
+        {frontier.ticks.map(tick => {
+          const x = xOf(tick.x);
+          return (
+            <g>
+              <line
+                class="frontier-grid-x"
+                x1={x}
+                x2={x}
+                y1={plot.top}
+                y2={plot.top + plot.height}
+              />
+              <text
+                class="frontier-tick-x"
+                x={x}
+                y={plot.top + plot.height + 24}
+              >
+                {tick.label}
+              </text>
+            </g>
+          );
+        })}
+
+        <!-- Reference Baselines (PhD Expert & Random Chance) -->
+        {frontier.baselines.map(baseline => {
+          const y = yOf(baseline.y);
+          return (
+            <g class="frontier-baseline-group">
+              <line
+                class="frontier-baseline"
+                x1={plot.left}
+                x2={plot.left + plot.width}
+                y1={y}
+                y2={y}
+              />
+              <rect
+                class="frontier-baseline-bg"
+                x={plot.left + 8}
+                y={y - 18}
+                width={baseline.label.length * 6.1 + 12}
+                height="15"
+                rx="4"
+              />
+              <text class="frontier-baseline-label" x={plot.left + 14} y={y - 8}>
+                {baseline.label}
+              </text>
+            </g>
+          );
+        })}
+
+        <!-- Milestone Event Vertical Markers -->
+        {frontier.events.map((event, idx) => {
+          const x = xOf(event.x);
+          return (
+            <g class="frontier-event-group">
+              <line
+                class="frontier-event"
+                x1={x}
+                x2={x}
+                y1={plot.top}
+                y2={plot.top + plot.height}
+              />
+              <circle
+                class="frontier-event-badge"
+                cx={x}
+                cy={plot.top - 12}
+                r="8"
+              />
+              <text class="frontier-event-num" x={x} y={plot.top - 12}>
+                {idx + 1}
+              </text>
+            </g>
+          );
+        })}
+
+        <!-- Lab Area Fills (visible when a lab is highlighted) -->
+        {frontier.lines.map(line => (
+          <path
+            class="frontier-area"
+            data-lab-id={line.id}
+            fill={`url(#grad-${line.id})`}
+            d={areaPath(line.points, xOf, yOf, plot.top + plot.height)}
+          />
+        ))}
+
+        <!-- Lab Frontier Polylines (Angled Point-to-Point: M x0 y0 L x1 y1 ...) -->
+        {frontier.lines.map((line, index) => {
+          const d = linePath(line.points, xOf, yOf);
+          return (
+            <g class="frontier-line-group" data-lab-id={line.id} data-series={index}>
+              <path
+                class="frontier-series-hit"
+                d={d}
+                data-lab-id={line.id}
+              />
+              <path
+                class="frontier-series"
+                data-series={index}
+                data-lab-id={line.id}
+                stroke={line.color}
+                d={d}
+              />
+            </g>
+          );
+        })}
+
+        <!-- Non-Frontier Scatter Points (Efficient / Smaller / Open-Weight Models) -->
+        {frontier.lines.map((line, index) => (
+          <g class="frontier-scatter-group" data-lab-id={line.id}>
+            {line.allPoints
+              .filter(point => !point.isFrontier)
+              .map(point => (
+                <circle
+                  class="frontier-mark frontier-mark-scatter"
+                  data-series={index}
+                  data-lab-id={line.id}
+                  data-lab={line.name}
+                  data-color={line.color}
+                  data-model={point.name}
+                  data-score={point.score.toFixed(1)}
+                  data-date={point.releasedLabel}
+                  data-category={point.category}
+                  data-frontier="false"
+                  cx={xOf(point.x)}
+                  cy={yOf(point.y)}
+                  r="3.6"
+                  fill="#ffffff"
+                  stroke={line.color}
+                  stroke-width="2"
+                  tabindex="0"
+                  role="button"
+                  aria-label={`${point.name} (${line.name}): ${point.score.toFixed(1)}% on ${point.releasedLabel}`}
+                />
+              ))}
+          </g>
+        ))}
+
+        <!-- Frontier Record Points & Key Callout Labels -->
+        {frontier.lines.map((line, index) => (
+          <g class="frontier-points-group" data-lab-id={line.id}>
+            {line.points.map(point => {
+              const cx = xOf(point.x);
+              const cy = yOf(point.y);
+              const showCallout = annotatedModels.has(point.name);
+              const offset = showCallout ? annotationOffset(point) : null;
+              return (
+                <g>
+                  <circle
+                    class="frontier-mark frontier-mark-record"
+                    data-series={index}
+                    data-lab-id={line.id}
+                    data-lab={line.name}
+                    data-color={line.color}
+                    data-model={point.name}
+                    data-score={point.score.toFixed(1)}
+                    data-date={point.releasedLabel}
+                    data-category={point.category}
+                    data-frontier="true"
+                    cx={cx}
+                    cy={cy}
+                    r="4.6"
+                    fill={line.color}
+                    stroke="#ffffff"
+                    stroke-width="1.8"
+                    tabindex="0"
+                    role="button"
+                    aria-label={`${point.name} (${line.name}, Frontier Record): ${point.score.toFixed(1)}% on ${point.releasedLabel}`}
+                  />
+                  {showCallout && offset && (
+                    <text
+                      class="frontier-callout"
+                      x={cx + offset.dx}
+                      y={cy + offset.dy}
+                      text-anchor={offset.anchor}
+                      fill={line.color}
+                    >
+                      {point.name}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+          </g>
+        ))}
+
+        <!-- Right-Margin Direct Lab Endpoint Labels -->
+        {rawEndLabels.map(item => (
+          <g class="frontier-end-label" data-lab-id={item.id}>
+            <path
+              class="frontier-end-connector"
+              stroke={item.color}
+              d={`M ${item.lastX + 6} ${item.lastY} L ${plot.left + plot.width + 12} ${item.labelY}`}
+            />
+            <circle
+              cx={plot.left + plot.width + 18}
+              cy={item.labelY}
+              r="3.5"
+              fill={item.color}
+            />
+            <text
+              class="frontier-end-text"
+              x={plot.left + plot.width + 26}
+              y={item.labelY}
+              fill={item.color}
+            >
+              {item.name} · {item.peakScore.toFixed(1)}%
+            </text>
+          </g>
+        ))}
+      </svg>
+
+      <!-- Floating Tooltip for Node Hover / Focus -->
+      <div class="frontier-tooltip" id="frontier-tooltip" role="status" aria-live="polite" hidden>
+        <div class="tooltip-top">
+          <span class="tooltip-lab-dot" id="tooltip-dot"></span>
+          <span class="tooltip-lab" id="tooltip-lab"></span>
+          <span class="tooltip-badge" id="tooltip-badge"></span>
+        </div>
+        <div class="tooltip-model" id="tooltip-model"></div>
+        <div class="tooltip-metrics">
+          <span class="tooltip-score" id="tooltip-score"></span>
+          <span class="tooltip-date" id="tooltip-date"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Milestone Events Strip inside Figure Card -->
+    <div class="frontier-milestones">
+      {frontier.events.map((event, idx) => (
+        <div class="milestone-item">
+          <div class="milestone-top">
+            <span class="milestone-num">{idx + 1}</span>
+            <time datetime={event.dateIso}>{event.dateLabel}</time>
+          </div>
+          <div class="milestone-title">{event.label}</div>
+          {event.detail && <p class="milestone-detail">{event.detail}</p>}
+        </div>
+      ))}
+    </div>
+  </figure>
+
+  <!-- Detailed Lab Breakdown Cards -->
+  <div class="frontier-reading" id="frontier-reading">
+    {frontier.lines.map((line, index) => (
+      <section
+        class="lab-card"
+        data-lab-card={line.id}
+        style={`--lab-color: ${line.color}; --lab-tint: ${line.tint};`}
+      >
+        <header class="lab-card-header">
+          <div class="lab-card-title-group">
+            <span class="lab-swatch-pill" aria-hidden="true"></span>
+            <div>
+              <h2 class="frontier-lab">{line.name}</h2>
+              <span class="lab-series-badge">{line.badge}</span>
+            </div>
+          </div>
+          <div class="lab-card-stats">
+            <div class="lab-stat">
+              <span class="lab-stat-value">{line.peakScore.toFixed(1)}%</span>
+              <span class="lab-stat-label">Peak Score</span>
+            </div>
+            <div class="lab-stat">
+              <span class="lab-stat-value">{line.allPoints.length}</span>
+              <span class="lab-stat-label">Models</span>
+            </div>
+          </div>
+        </header>
+
+        <ol class="frontier-points">
+          {line.allPoints.map(point => (
+            <li
+              class:list={[
+                'frontier-point-row',
+                { 'is-non-frontier': !point.isFrontier },
+              ]}
+              data-series={index}
+            >
+              <time datetime={point.released}>{point.releasedLabel}</time>
+              <div class="point-model-cell">
+                <span class="frontier-model">{point.name}</span>
+                <span
+                  class:list={[
+                    'model-cat-chip',
+                    `cat-${point.category.toLowerCase()}`,
+                  ]}
+                >
+                  {point.category}
+                </span>
+                {point.isFrontier && (
+                  <span class="frontier-record-dot" title="Lab frontier record at release">
+                    Record
+                  </span>
+                )}
+              </div>
+              <div class="point-score-cell">
+                <div class="score-bar-track" aria-hidden="true">
+                  <div
+                    class="score-bar-fill"
+                    style={`width: ${point.score}%; background: ${line.color};`}
+                  ></div>
+                </div>
+                <span class="frontier-score">{point.score.toFixed(1)}%</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+  </div>
+</div>
+
+<script>
+  const workspace = document.getElementById('frontier-workspace');
+  const stage = document.getElementById('frontier-stage');
+  const tooltip = document.getElementById('frontier-tooltip');
+  const tooltipDot = document.getElementById('tooltip-dot');
+  const tooltipLab = document.getElementById('tooltip-lab');
+  const tooltipBadge = document.getElementById('tooltip-badge');
+  const tooltipModel = document.getElementById('tooltip-model');
+  const tooltipScore = document.getElementById('tooltip-score');
+  const tooltipDate = document.getElementById('tooltip-date');
+
+  if (workspace && stage && tooltip) {
+    // 1. Lab filtering
+    const filterButtons = workspace.querySelectorAll<HTMLButtonElement>('[data-lab-filter]');
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selected = btn.dataset.labFilter ?? 'all';
+        filterButtons.forEach(b => {
+          const active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', String(active));
+        });
+        if (selected === 'all') {
+          delete workspace.dataset.activeLab;
+        } else {
+          workspace.dataset.activeLab = selected;
+        }
+      });
+    });
+
+    // 2. All Models vs Frontier Only toggle
+    const modeButtons = workspace.querySelectorAll<HTMLButtonElement>('[data-point-mode]');
+    modeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.pointMode ?? 'all';
+        modeButtons.forEach(b => {
+          const active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', String(active));
+        });
+        workspace.dataset.pointMode = mode;
+      });
+    });
+
+    // 3. Hover / Focus Tooltip on Model Nodes
+    const marks = stage.querySelectorAll<SVGCircleElement>('.frontier-mark');
+    const showTooltip = (mark: SVGCircleElement) => {
+      const model = mark.dataset.model ?? '';
+      const lab = mark.dataset.lab ?? '';
+      const color = mark.dataset.color ?? '#1A73E8';
+      const score = mark.dataset.score ?? '';
+      const date = mark.dataset.date ?? '';
+      const category = mark.dataset.category ?? '';
+      const isFrontier = mark.dataset.frontier === 'true';
+
+      if (tooltipDot) tooltipDot.style.background = color;
+      if (tooltipLab) tooltipLab.textContent = lab;
+      if (tooltipBadge) {
+        tooltipBadge.textContent = isFrontier ? `${category} · Record` : category;
+      }
+      if (tooltipModel) tooltipModel.textContent = model;
+      if (tooltipScore) tooltipScore.textContent = `${score}% GPQA`;
+      if (tooltipDate) tooltipDate.textContent = date;
+
+      tooltip.hidden = false;
+      const stageRect = stage.getBoundingClientRect();
+      const markRect = mark.getBoundingClientRect();
+      const relX = markRect.left - stageRect.left + markRect.width / 2;
+      const relY = markRect.top - stageRect.top;
+
+      const clampedX = Math.max(110, Math.min(stageRect.width - 110, relX));
+      tooltip.style.left = `${clampedX}px`;
+      tooltip.style.top = `${Math.max(12, relY - 12)}px`;
+    };
+
+    const hideTooltip = () => {
+      tooltip.hidden = true;
+    };
+
+    marks.forEach(mark => {
+      mark.addEventListener('pointerenter', () => showTooltip(mark));
+      mark.addEventListener('focus', () => showTooltip(mark));
+      mark.addEventListener('pointerleave', hideTooltip);
+      mark.addEventListener('blur', hideTooltip);
+    });
+  }
+</script>

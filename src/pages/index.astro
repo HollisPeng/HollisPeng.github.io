@@ -1,71 +1,243 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import RepositoryList from '../components/RepositoryList.astro';
-import EnergyLandscape from '../components/EnergyLandscape.astro';
+import RepositoryList from '../components/home/RepositoryList.astro';
+import EnergyLandscape from '../components/home/EnergyLandscape.astro';
 import { profile, featuredProjects, skills } from '../data/profile';
 import rawSnapshot from '../data/github-projects.json';
-import { readSnapshot, formatDate } from '../data/github';
+import { readSnapshot, formatDate } from '../lib/github';
+
 const snapshot = readSnapshot(rawSnapshot);
 const [currentFocus, ...currentNotes] = profile.currently;
 ---
-<BaseLayout title={profile.name} description={profile.description} canonicalPath="/">
+<BaseLayout
+  title={profile.name}
+  description={profile.description}
+  canonicalPath="/"
+>
   <main id="main" class="wrap" tabindex="-1">
     <section class="hero" aria-labelledby="name">
       <div class="hero-copy">
-        <p class="status"><span class="status-dot" aria-hidden="true"></span>{profile.status}</p>
-        <h1 id="name">{profile.name}<span class="period" aria-hidden="true">.</span></h1>
+        <p class="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>{profile.status}</span>
+        </p>
+        <h1 id="name">
+          {profile.name}<span class="period" aria-hidden="true">.</span>
+        </h1>
         <p class="hero-statement">{profile.statement}</p>
-        <div class="hero-links"><a class="button" href="#work">View work <span aria-hidden="true">↓</span></a><a class="button button-quiet" href={profile.github} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></div>
+        <div class="hero-chips" aria-label="Research and academic focus">
+          <span class="chip chip-blue">CUHK Computer Science</span>
+          <span class="chip chip-green">Energy-Based Models</span>
+          <span class="chip chip-yellow">Variational Inference</span>
+        </div>
+        <div class="hero-links">
+          <a class="button" href="#work">
+            View selected work <span aria-hidden="true">↓</span>
+          </a>
+          <a class="button button-tonal" href="/models">
+            AI Models Frontier <span aria-hidden="true">→</span>
+          </a>
+          <a
+            class="button button-quiet"
+            href={profile.github}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
       <figure class="hero-figure">
-        <div class="hero-art"><EnergyLandscape /></div>
-        <figcaption>An energy landscape, with one sampled path settling into a basin.</figcaption>
+        <div class="hero-art">
+          <EnergyLandscape />
+        </div>
+        <figcaption>
+          An energy landscape E(x), with a Langevin dynamics trajectory settling into a low-energy basin.
+        </figcaption>
       </figure>
     </section>
+
     <section id="work" class="work section" aria-labelledby="work-title">
-      <div class="section-heading"><h2 id="work-title">Selected Work</h2><p class="section-note">Ordered by scope and impact</p></div>
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">Engineering & Research</span>
+          <h2 id="work-title">Selected Work</h2>
+        </div>
+        <p class="section-note">Ordered by scope and technical impact</p>
+      </div>
       <div class="featured-grid">
         {featuredProjects.map((project, index) => {
-          const metadata = project.owner ? undefined : snapshot.featured.find(repo => repo.name === project.repository);
-          const url = project.repository ? `https://github.com/${project.owner ?? 'HollisPeng'}/${project.repository}` : undefined;
-          return <article class:list={['featured-project', { lead: index === 0 }]}>
-            <div class="project-top"><span class="project-index" aria-hidden="true">0{index + 1}</span><span class="project-role">{project.role}</span></div>
-            <h3>{url ? <a href={url} target="_blank" rel="noopener noreferrer">{project.title}<span class="project-arrow" aria-hidden="true">↗</span></a> : project.title}</h3>
-            <div class="project-body">
-              <p>{project.description}</p>
-              <div class="metadata">
-                {metadata?.language && <span>{metadata.language}</span>}
-                {project.tags?.map(tag => <span>{tag}</span>)}
-                {metadata && <span>Updated <time datetime={metadata.updatedAt}>{formatDate(metadata.updatedAt)}</time></span>}
+          const metadata = project.owner
+            ? undefined
+            : snapshot.featured.find(repo => repo.name === project.repository);
+          const url = project.repository
+            ? `https://github.com/${project.owner ?? 'HollisPeng'}/${project.repository}`
+            : undefined;
+          return (
+            <article class:list={['featured-project', { lead: index === 0 }]}>
+              <div class="project-top">
+                <span class="project-index" aria-hidden="true">
+                  0{index + 1}
+                </span>
+                <span class="project-role">{project.role}</span>
               </div>
-              {url && <div class="project-links">
-                <a class="project-link" href={url} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} on GitHub`}>View on GitHub <span aria-hidden="true">↗</span></a>
-                {project.pullRequest && <a class="project-link" href={`${url}/pull/${project.pullRequest}`} target="_blank" rel="noopener noreferrer" aria-label={`View my pull request to ${project.title}`}>Pull request <span aria-hidden="true">↗</span></a>}
-              </div>}
-            </div>
-          </article>;
+              <h3>
+                {url ? (
+                  <a href={url} target="_blank" rel="noopener noreferrer">
+                    {project.title}
+                    <span class="project-arrow" aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  project.title
+                )}
+              </h3>
+              <div class="project-body">
+                <p>{project.description}</p>
+                <div class="metadata">
+                  {metadata?.language && (
+                    <span class="chip chip-neutral">{metadata.language}</span>
+                  )}
+                  {project.tags?.map(tag => (
+                    <span class="chip chip-neutral">{tag}</span>
+                  ))}
+                  {metadata && (
+                    <span class="meta-time">
+                      Updated{' '}
+                      <time datetime={metadata.updatedAt}>
+                        {formatDate(metadata.updatedAt)}
+                      </time>
+                    </span>
+                  )}
+                </div>
+                {url && (
+                  <div class="project-links">
+                    <a
+                      class="project-link"
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View ${project.title} on GitHub`}
+                    >
+                      View on GitHub <span aria-hidden="true">↗</span>
+                    </a>
+                    {project.pullRequest && (
+                      <a
+                        class="project-link"
+                        href={`${url}/pull/${project.pullRequest}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`View my pull request to ${project.title}`}
+                      >
+                        Pull request <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </article>
+          );
         })}
       </div>
     </section>
+
     <section class="more-section" aria-labelledby="more-title">
-      <div class="more-heading"><h2 id="more-title">More on GitHub</h2><a href={profile.github} target="_blank" rel="noopener noreferrer">All repositories <span aria-hidden="true">↗</span></a></div>
+      <div class="more-heading">
+        <div class="more-title-wrap">
+          <span class="google-dots google-dots-xs" aria-hidden="true">
+            <span class="g-dot g-blue"></span>
+            <span class="g-dot g-red"></span>
+            <span class="g-dot g-yellow"></span>
+            <span class="g-dot g-green"></span>
+          </span>
+          <h2 id="more-title">More on GitHub</h2>
+        </div>
+        <a href={profile.github} target="_blank" rel="noopener noreferrer">
+          All repositories <span aria-hidden="true">↗</span>
+        </a>
+      </div>
       <RepositoryList repositories={snapshot.repositories} />
     </section>
+
     <section id="about" class="section split-section" aria-labelledby="about-title">
-      <h2 id="about-title">About</h2>
-      <div><p class="about-copy">{profile.about}</p><p class="college">{profile.college}</p></div>
+      <div>
+        <span class="section-eyebrow">Background</span>
+        <h2 id="about-title">About</h2>
+      </div>
+      <div class="about-panel">
+        <p class="about-copy">{profile.about}</p>
+        <p class="college">{profile.college}</p>
+      </div>
     </section>
+
     <section id="skills" class="section split-section" aria-labelledby="skills-title">
-      <h2 id="skills-title">Skills</h2>
-      <div class="skills-grid">{skills.map(group => <div class="skill-group"><h3>{group.category}</h3><ul>{group.items.map(item => <li><span>{item.name}</span>{item.learning && <span class="learning">learning</span>}</li>)}</ul></div>)}</div>
+      <div>
+        <span class="section-eyebrow">Foundations</span>
+        <h2 id="skills-title">Skills</h2>
+      </div>
+      <div class="skills-grid">
+        {skills.map(group => (
+          <div class={`skill-group skill-accent-${group.accent}`}>
+            <h3>
+              <span class="skill-dot" aria-hidden="true"></span>
+              {group.category}
+            </h3>
+            <ul>
+              {group.items.map(item => (
+                <li>
+                  <span>{item.name}</span>
+                  {item.learning && <span class="learning">learning</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </section>
+
     <section class="split-section currently" aria-labelledby="currently-title">
-      <h2 id="currently-title">Currently</h2>
-      <div class="currently-copy"><p class="currently-focus">{currentFocus}</p><ul>{currentNotes.map(line => <li>{line}</li>)}</ul></div>
+      <div>
+        <span class="section-eyebrow">Active Focus</span>
+        <h2 id="currently-title">Currently</h2>
+      </div>
+      <div class="currently-copy">
+        <p class="currently-focus">{currentFocus}</p>
+        <ul>
+          {currentNotes.map(line => (
+            <li>{line}</li>
+          ))}
+        </ul>
+      </div>
     </section>
+
     <section class="section split-section contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Contact</h2>
-      <div><p>Email or find me on GitHub.</p><div class="contact-links"><a href={`mailto:${profile.email}`}>{profile.email}<span aria-hidden="true"> ↗</span></a><a href={profile.github} target="_blank" rel="noopener noreferrer">github.com/HollisPeng<span aria-hidden="true"> ↗</span></a></div></div>
+      <div>
+        <span class="section-eyebrow">Get in Touch</span>
+        <h2 id="contact-title">Contact</h2>
+      </div>
+      <div>
+        <p class="contact-lead">Reach out via email or explore my code on GitHub.</p>
+        <div class="contact-links">
+          <a class="contact-card" href={`mailto:${profile.email}`}>
+            <span class="contact-label">Email</span>
+            <span class="contact-value">
+              {profile.email}
+              <span class="link-arrow" aria-hidden="true">↗</span>
+            </span>
+          </a>
+          <a
+            class="contact-card"
+            href={profile.github}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="contact-label">GitHub</span>
+            <span class="contact-value">
+              github.com/HollisPeng
+              <span class="link-arrow" aria-hidden="true">↗</span>
+            </span>
+          </a>
+        </div>
+      </div>
     </section>
   </main>
 </BaseLayout>

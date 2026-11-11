@@ -1,0 +1,27 @@
+---
+import { profile } from '../../data/profile';
+---
+<footer class="site-footer-wrap">
+  <div class="google-spectrum-bar" aria-hidden="true">
+    <span class="g-bar-blue"></span>
+    <span class="g-bar-red"></span>
+    <span class="g-bar-yellow"></span>
+    <span class="g-bar-green"></span>
+  </div>
+  <div class="wrap site-footer">
+    <div class="footer-brand">
+      <span class="footer-copy">© {new Date().getFullYear()} {profile.name}</span>
+      <span class="footer-divider" aria-hidden="true">·</span>
+      <span class="footer-meta">{profile.college}</span>
+    </div>
+    <div class="footer-links">
+      <a href="/models">AI Models Frontier</a>
+      <a href={profile.github} target="_blank" rel="noopener noreferrer">
+        GitHub <span class="link-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a href={profile.source} target="_blank" rel="noopener noreferrer">
+        Source on GitHub <span class="link-arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+</footer>

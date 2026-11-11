@@ -1,0 +1,54 @@
+---
+import type { Repository } from '../../lib/github';
+import { formatDate } from '../../lib/github';
+import { profile } from '../../data/profile';
+
+interface Props {
+  repositories: Repository[] | null;
+}
+
+const { repositories } = Astro.props;
+---
+<div id="repositories" aria-live="polite" aria-atomic="true">
+  {repositories === null ? (
+    <p class="empty-state">
+      Projects are temporarily unavailable.{' '}
+      <a href={profile.github} target="_blank" rel="noopener noreferrer">
+        View them on GitHub.
+      </a>
+    </p>
+  ) : repositories.length === 0 ? null : (
+    <ul class="repository-list">
+      {repositories.map(repository => (
+        <li class="repository-card">
+          <div class="repository-copy">
+            <h3>
+              <a href={repository.url} target="_blank" rel="noopener noreferrer">
+                {repository.name}
+                <span class="link-arrow" aria-hidden="true"> ↗</span>
+              </a>
+            </h3>
+            {repository.description && <p>{repository.description}</p>}
+          </div>
+          <div class="metadata">
+            {repository.language && (
+              <span class="chip chip-neutral">{repository.language}</span>
+            )}
+            <span class="chip chip-neutral">
+              ★ {repository.stars} {repository.stars === 1 ? 'star' : 'stars'}
+            </span>
+            <span class="meta-time">
+              Updated{' '}
+              <time datetime={repository.updatedAt}>
+                {formatDate(repository.updatedAt)}
+              </time>
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+<script>
+  import '../../scripts/github-projects';
+</script>
