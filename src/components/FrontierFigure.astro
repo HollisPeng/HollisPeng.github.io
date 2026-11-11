@@ -1,0 +1,64 @@
+---
+import type { Frontier, FrontierPoint } from '../data/frontier';
+
+interface Props {
+  frontier: Frontier;
+}
+
+const { frontier } = Astro.props;
+const plot = { left: 44, top: 16, width: 672, height: 288 };
+const viewBox = `0 0 ${plot.left + plot.width + 12} ${plot.top + plot.height + 16}`;
+const place = (value: number) => Math.round(value * 100) / 100;
+const xOf = (x: number) => place(plot.left + x * plot.width);
+const yOf = (y: number) => place(plot.top + (1 - y) * plot.height);
+const levels = [0, 0.25, 0.5, 0.75, 1];
+
+function stepPath(points: FrontierPoint[]) {
+  const [first, ...rest] = points;
+  if (!first) return '';
+  let path = `M ${xOf(first.x)} ${yOf(first.y)}`;
+  for (const point of rest) path += ` H ${xOf(point.x)} V ${yOf(point.y)}`;
+  return path;
+}
+---
+<figure class="frontier">
+  <svg class="frontier-plot" viewBox={viewBox} aria-hidden="true">
+    {levels.map(level => <g>
+      <line class="frontier-grid" x1={plot.left} x2={plot.left + plot.width} y1={yOf(level)} y2={yOf(level)} />
+      <text class="frontier-tick" x={plot.left - 8} y={yOf(level)}>{level * 100}</text>
+    </g>)}
+    {frontier.events.map(event => <line class="frontier-event" x1={xOf(event.x)} x2={xOf(event.x)} y1={yOf(0)} y2={yOf(1)} />)}
+    {frontier.lines.map((line, index) => <g>
+      <path class="frontier-series" data-series={index} d={stepPath(line.points)} />
+      {line.points.map(point => <circle class="frontier-mark" data-series={index} cx={xOf(point.x)} cy={yOf(point.y)} r="3.5" />)}
+    </g>)}
+  </svg>
+  <ul class="frontier-legend">
+    {frontier.lines.map((line, index) => <li>
+      <svg class="frontier-swatch" viewBox="0 0 32 8" aria-hidden="true"><line class="frontier-series" data-series={index} x1="1" y1="4" x2="31" y2="4" /></svg>
+      {line.name}
+    </li>)}
+  </ul>
+  <div class="frontier-reading">
+    {frontier.lines.map((line, index) => <section>
+      <h2 class="frontier-lab">
+        <svg class="frontier-swatch" viewBox="0 0 32 8" aria-hidden="true"><line class="frontier-series" data-series={index} x1="1" y1="4" x2="31" y2="4" /></svg>
+        {line.name}
+      </h2>
+      <ol class="frontier-points">
+        {line.points.map(point => <li>
+          <time datetime={point.released}>{point.releasedLabel}</time>
+          <span class="frontier-model">{point.name}</span>
+          <span class="frontier-score">{point.score.toFixed(1)}%</span>
+          <span class="frontier-source">{point.source}</span>
+        </li>)}
+      </ol>
+    </section>)}
+    <section class="frontier-events">
+      <h2>Marked dates</h2>
+      <ol class="frontier-points">
+        {frontier.events.map(event => <li><time datetime={event.dateIso}>{event.dateLabel}</time><span>{event.label}</span></li>)}
+      </ol>
+    </section>
+  </div>
+</figure>

@@ -10,7 +10,7 @@
     "dev": "astro dev",
     "sync": "node scripts/fetch-github-projects.mjs",
     "check": "astro check",
-    "test": "node --test scripts/github.test.mjs",
+    "test": "node --test scripts/github.test.mjs scripts/frontier.test.mjs",
     "build": "npm run sync && astro build",
     "preview": "astro preview"
   },
