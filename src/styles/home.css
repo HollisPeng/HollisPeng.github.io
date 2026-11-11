@@ -126,7 +126,7 @@
 
 .landscape-canvas {
   aspect-ratio: 13 / 13.5;
-  background: linear-gradient(180deg, #f8fafd 0%, #eff4fb 100%);
+  background: var(--landscape-bg);
 }
 
 .landscape {
@@ -136,7 +136,7 @@
 }
 
 .landscape-grid line {
-  stroke: #dfe6f2;
+  stroke: var(--grid-stroke);
   stroke-width: 1;
   stroke-dasharray: 3 3;
 }
@@ -181,7 +181,7 @@
 
 .landscape-walk-halo {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.85);
+  stroke: var(--halo-stroke);
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -273,7 +273,7 @@
 }
 
 .featured-project:hover {
-  border-color: #a8c7fa;
+  border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
@@ -391,8 +391,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   column-gap: clamp(28px, 4.5vw, 64px);
   padding: 32px 36px;
-  background: linear-gradient(135deg, #e8f0fe 0%, #f4f7fc 60%, #ffffff 100%);
-  border: 1px solid #c2d7fa;
+  background: var(--lead-card-bg);
+  border: 1px solid var(--lead-card-border);
   border-radius: var(--radius-large);
 }
 
@@ -402,14 +402,14 @@
 }
 
 .lead .project-index {
-  background: var(--google-blue);
-  color: #ffffff;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
 }
 
 .lead .project-role {
   color: var(--google-blue-dark);
-  background: #ffffff;
-  border: 1px solid #c2d7fa;
+  background: var(--surface);
+  border: 1px solid var(--lead-card-border);
 }
 
 .featured-project.lead h3 {
@@ -698,7 +698,7 @@
 }
 
 .contact-card:hover {
-  border-color: #a8c7fa;
+  border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
 }
 

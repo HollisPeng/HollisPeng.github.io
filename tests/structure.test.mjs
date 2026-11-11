@@ -29,6 +29,8 @@ test('maintains organized source, style, script, and test directories', async ()
     'src/data/github-projects.json',
     'src/lib/frontier.ts',
     'src/lib/github.ts',
+    'src/scripts/github-projects.ts',
+    'src/scripts/theme.ts',
     'src/styles/tokens.css',
     'src/styles/base.css',
     'src/styles/home.css',

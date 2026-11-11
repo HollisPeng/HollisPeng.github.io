@@ -6,24 +6,27 @@
   src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2');
 }
 
-:root {
+:root,
+:root[data-theme='light'] {
   color-scheme: light;
 
-  /* Google Material 3 Surface System */
+  /* Google Material 3 Surface System (Light) */
   --surface: #ffffff;
   --surface-dim: #f8fafd;
   --surface-container-low: #f0f4f9;
   --surface-container: #e9eef6;
   --surface-container-high: #dde3ea;
+  --header-bg: rgba(248, 250, 253, 0.86);
 
-  /* Google Tonal Containers */
+  /* Google Tonal Containers (Light) */
   --tonal-blue: #e8f0fe;
   --tonal-blue-strong: #d3e3fd;
   --tonal-green: #e6f4ea;
   --tonal-yellow: #fef7e0;
   --tonal-red: #fce8e6;
+  --tonal-purple: #f3e8ff;
 
-  /* Google Ink & Typography Colors */
+  /* Google Ink & Typography Colors (Light) */
   --ink: #1f1f1f;
   --ink-secondary: #444746;
   --ink-muted: #5f6368;
@@ -39,12 +42,30 @@
   --google-yellow-dark: #b06000;
   --google-green: #34a853;
   --google-green-dark: #137333;
+  --purple-accent: #6d28d9;
 
-  /* Hairlines & Outlines */
+  /* Primary Button Tokens (M3 Light) */
+  --btn-primary-bg: #1a73e8;
+  --btn-primary-hover: #0b57d0;
+  --btn-primary-text: #ffffff;
+
+  /* Hairlines, Interactive Borders & Component Surfaces */
   --rule: #dadce0;
   --rule-subtle: #e2e8f0;
+  --border-hover: #a8c7fa;
+  --lead-card-bg: linear-gradient(135deg, #e8f0fe 0%, #f4f7fc 60%, #ffffff 100%);
+  --lead-card-border: #c2d7fa;
+  --landscape-bg: linear-gradient(180deg, #f8fafd 0%, #eff4fb 100%);
+  --grid-stroke: #dfe6f2;
+  --grid-stroke-subtle: #eef2f8;
+  --halo-stroke: rgba(255, 255, 255, 0.85);
+  --baseline-bg: rgba(255, 255, 255, 0.9);
 
-  /* Typography Stacks (Clean Geometric/Humanist Sans + Technical Mono) */
+  /* Lab Dynamic Stroke Adaptation (xAI is dark charcoal in light mode) */
+  --lab-stroke-xai: #202124;
+  --lab-tint-xai: #f1f3f4;
+
+  /* Typography Stacks */
   --sans: 'Inter Variable', 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --mono: 'JetBrains Mono', 'Roboto Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
 
@@ -64,4 +85,119 @@
   background: var(--surface-dim);
   font-synthesis: none;
   scroll-behavior: smooth;
+}
+
+/* Google Material 3 Dark Theme Tokens */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --surface: #1e1f22;
+    --surface-dim: #131314;
+    --surface-container-low: #282a2e;
+    --surface-container: #303338;
+    --surface-container-high: #3c4043;
+    --header-bg: rgba(19, 19, 20, 0.86);
+
+    --tonal-blue: rgba(138, 180, 248, 0.16);
+    --tonal-blue-strong: rgba(138, 180, 248, 0.26);
+    --tonal-green: rgba(129, 201, 149, 0.16);
+    --tonal-yellow: rgba(253, 214, 99, 0.16);
+    --tonal-red: rgba(242, 139, 130, 0.16);
+    --tonal-purple: rgba(192, 132, 252, 0.18);
+
+    --ink: #e3e3e3;
+    --ink-secondary: #c4c7c5;
+    --ink-muted: #9aa0a6;
+    --ink-subtle: #80868b;
+
+    --google-blue: #8ab4f8;
+    --google-blue-dark: #a8c7fa;
+    --google-blue-bright: #669df6;
+    --google-red: #f28b82;
+    --google-red-dark: #f6aea9;
+    --google-yellow: #fdd663;
+    --google-yellow-dark: #fde293;
+    --google-green: #81c995;
+    --google-green-dark: #a8dab5;
+    --purple-accent: #d8b4fe;
+
+    --btn-primary-bg: #8ab4f8;
+    --btn-primary-hover: #aecbfa;
+    --btn-primary-text: #062e6f;
+
+    --rule: #3c4043;
+    --rule-subtle: #2d3034;
+    --border-hover: #669df6;
+    --lead-card-bg: linear-gradient(135deg, #1b263b 0%, #1c222d 60%, #1e1f22 100%);
+    --lead-card-border: #334e7b;
+    --landscape-bg: linear-gradient(180deg, #181b22 0%, #12151b 100%);
+    --grid-stroke: #283040;
+    --grid-stroke-subtle: #22262e;
+    --halo-stroke: rgba(19, 19, 20, 0.85);
+    --baseline-bg: rgba(30, 31, 34, 0.92);
+
+    --lab-stroke-xai: #e2e8f0;
+    --lab-tint-xai: rgba(226, 232, 240, 0.16);
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.55);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --surface: #1e1f22;
+  --surface-dim: #131314;
+  --surface-container-low: #282a2e;
+  --surface-container: #303338;
+  --surface-container-high: #3c4043;
+  --header-bg: rgba(19, 19, 20, 0.86);
+
+  --tonal-blue: rgba(138, 180, 248, 0.16);
+  --tonal-blue-strong: rgba(138, 180, 248, 0.26);
+  --tonal-green: rgba(129, 201, 149, 0.16);
+  --tonal-yellow: rgba(253, 214, 99, 0.16);
+  --tonal-red: rgba(242, 139, 130, 0.16);
+  --tonal-purple: rgba(192, 132, 252, 0.18);
+
+  --ink: #e3e3e3;
+  --ink-secondary: #c4c7c5;
+  --ink-muted: #9aa0a6;
+  --ink-subtle: #80868b;
+
+  --google-blue: #8ab4f8;
+  --google-blue-dark: #a8c7fa;
+  --google-blue-bright: #669df6;
+  --google-red: #f28b82;
+  --google-red-dark: #f6aea9;
+  --google-yellow: #fdd663;
+  --google-yellow-dark: #fde293;
+  --google-green: #81c995;
+  --google-green-dark: #a8dab5;
+  --purple-accent: #d8b4fe;
+
+  --btn-primary-bg: #8ab4f8;
+  --btn-primary-hover: #aecbfa;
+  --btn-primary-text: #062e6f;
+
+  --rule: #3c4043;
+  --rule-subtle: #2d3034;
+  --border-hover: #669df6;
+  --lead-card-bg: linear-gradient(135deg, #1b263b 0%, #1c222d 60%, #1e1f22 100%);
+  --lead-card-border: #334e7b;
+  --landscape-bg: linear-gradient(180deg, #181b22 0%, #12151b 100%);
+  --grid-stroke: #283040;
+  --grid-stroke-subtle: #22262e;
+  --halo-stroke: rgba(19, 19, 20, 0.85);
+  --baseline-bg: rgba(30, 31, 34, 0.92);
+
+  --lab-stroke-xai: #e2e8f0;
+  --lab-tint-xai: rgba(226, 232, 240, 0.16);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.55);
 }

@@ -244,12 +244,12 @@
 
 .key-node-frontier {
   background: var(--google-blue);
-  border: 1.5px solid #ffffff;
+  border: 1.5px solid var(--surface);
   box-shadow: 0 0 0 1px var(--google-blue);
 }
 
 .key-node-scatter {
-  background: #ffffff;
+  background: var(--surface);
   border: 2px solid var(--google-blue);
 }
 
@@ -274,13 +274,13 @@
 
 .frontier-grid {
   fill: none;
-  stroke: #e8edf5;
+  stroke: var(--grid-stroke);
   stroke-width: 1;
 }
 
 .frontier-grid-x {
   fill: none;
-  stroke: #f1f4f9;
+  stroke: var(--grid-stroke-subtle);
   stroke-width: 1;
 }
 
@@ -306,7 +306,7 @@
 }
 
 .frontier-baseline-bg {
-  fill: rgba(255, 255, 255, 0.9);
+  fill: var(--baseline-bg);
 }
 
 .frontier-baseline-label {
@@ -379,7 +379,7 @@
 .frontier-callout {
   font: 600 10.5px var(--sans);
   paint-order: stroke;
-  stroke: #ffffff;
+  stroke: var(--surface);
   stroke-width: 3.5px;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -664,7 +664,7 @@
   gap: 6px 12px;
   align-items: center;
   padding-block: 8px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--rule-subtle);
 }
 
 .frontier-point-row:last-child {
@@ -707,8 +707,8 @@
 }
 
 .cat-open-weight {
-  background: #f3e8ff;
-  color: #6d28d9;
+  background: var(--tonal-purple);
+  color: var(--purple-accent);
 }
 
 .cat-efficient {
