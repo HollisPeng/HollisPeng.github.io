@@ -1,5 +1,6 @@
 ---
-import type { Frontier, FrontierPoint } from '../data/frontier';
+import type { Frontier } from '../data/frontier';
+import { stepPath as stepCommands } from '../data/frontier-path';
 
 interface Props {
   frontier: Frontier;
@@ -13,13 +14,7 @@ const xOf = (x: number) => place(plot.left + x * plot.width);
 const yOf = (y: number) => place(plot.top + (1 - y) * plot.height);
 const levels = [0, 0.25, 0.5, 0.75, 1];
 
-function stepPath(points: FrontierPoint[]) {
-  const [first, ...rest] = points;
-  if (!first) return '';
-  let path = `M ${xOf(first.x)} ${yOf(first.y)}`;
-  for (const point of rest) path += ` H ${xOf(point.x)} V ${yOf(point.y)}`;
-  return path;
-}
+const stepPath = (points: { x: number; y: number }[]) => stepCommands(points, xOf, yOf);
 ---
 <figure class="frontier">
   <svg class="frontier-plot" viewBox={viewBox} aria-hidden="true">

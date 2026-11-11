@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { defineFrontier, frontier } from '../src/data/frontier.ts';
+import { stepPath } from '../src/data/frontier-path.ts';
 
 const source = 'Epoch AI, retrieved 12 Nov 2026.';
 const scale = { kind: 'published', meaning: 'Percent accuracy on GPQA Diamond, from Epoch AI.' };
@@ -52,6 +53,26 @@ test('the shipped OpenAI line ends at GPT-5, rises, and has ten points', () => {
   assert.equal(openai.points[9].score, 85.4);
   assert.equal(openai.points[9].x, 1);
   for (let i = 1; i < openai.points.length; i += 1) assert.ok(openai.points[i].score > openai.points[i - 1].score);
+});
+
+test('a line holds its last score flat through the right edge', () => {
+  const same = value => value;
+  const rising = stepPath([{ x: 0, y: 0.4 }, { x: 0.5, y: 0.8 }], same, same);
+  assert.equal(rising, 'M 0 0.4 H 0.5 V 0.8 H 1');
+  const alreadyThere = stepPath([{ x: 0, y: 0.2 }, { x: 1, y: 0.9 }], same, same);
+  assert.equal(alreadyThere, 'M 0 0.2 H 1 V 0.9');
+  for (const line of frontier.lines) {
+    const path = stepPath(line.points, same, same);
+    const last = line.points.at(-1);
+    if (last.x < 1) assert.match(path, / H 1$/);
+    else assert.doesNotMatch(path, / H 1$/);
+  }
+  const xai = frontier.lines.find(line => line.name === 'xAI');
+  assert.ok(xai.points.at(-1).x < 1);
+  assert.match(stepPath(xai.points, same, same), / H 1$/);
+  const openai = frontier.lines.find(line => line.name === 'OpenAI');
+  assert.equal(openai.points.at(-1).x, 1);
+  assert.doesNotMatch(stepPath(openai.points, same, same), / H 1$/);
 });
 
 test('the shipped view has six lines and three events', () => {
